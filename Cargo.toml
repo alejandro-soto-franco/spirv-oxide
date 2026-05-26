@@ -1,0 +1,50 @@
+[workspace]
+resolver = "3"
+members = [
+    "crates/spirv-device",
+    "crates/spirv-host",
+    "crates/dialect-spirv",
+]
+
+# Note: crates/rustc-codegen-spirv is NOT a workspace member because it
+# requires specific rustc nightly features and a different build process,
+# matching cuda-oxide's split for `rustc-codegen-cuda`.
+# Build and run examples with: cargo oxide-spirv run <example> (TODO)
+
+[workspace.package]
+version = "0.0.0"
+edition = "2024"
+authors = ["Alejandro Soto Franco <sotofranco.eng@gmail.com>"]
+license = "Apache-2.0"
+repository = "https://github.com/alejandro-soto-franco/spirv-oxide"
+
+[workspace.dependencies]
+# Pliron MLIR-style IR framework. Pinned to the same rev cuda-oxide uses so
+# the two projects can eventually share a Pliron-GPU dialect crate.
+pliron = { git = "https://github.com/vaivaswatha/pliron", rev = "b51e73b11648508188184451adebdcf63957b7fe" }
+pliron-derive = { git = "https://github.com/vaivaswatha/pliron", rev = "b51e73b11648508188184451adebdcf63957b7fe" }
+
+# Internal crates.
+spirv-device = { path = "crates/spirv-device" }
+spirv-host = { path = "crates/spirv-host" }
+dialect-spirv = { path = "crates/dialect-spirv" }
+
+# Host runtime stack.
+ash = { version = "0.38", default-features = false, features = ["loaded"] }
+bytemuck = { version = "1", features = ["derive"] }
+log = "0.4"
+thiserror = { version = "2", default-features = false, features = ["std"] }
+
+[workspace.lints.rust]
+missing_docs = "warn"
+unsafe_op_in_unsafe_fn = "warn"
+unreachable_pub = "warn"
+
+[workspace.lints.clippy]
+undocumented_unsafe_blocks = "warn"
+missing_safety_doc = "warn"
+
+[profile.release]
+opt-level = 3
+lto = "thin"
+codegen-units = 4

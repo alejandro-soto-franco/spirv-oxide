@@ -1,0 +1,17 @@
+[package]
+name = "spirv-host"
+description = "Host-side runtime for spirv-oxide: ash Vulkan device + module loading + kernel launch. Mirrors cuda-oxide's cuda-host for the SPIR-V / Vulkan compute target."
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+repository.workspace = true
+
+[lints]
+workspace = true
+
+[dependencies]
+ash = { workspace = true }
+bytemuck = { workspace = true }
+log = { workspace = true }
+thiserror = { workspace = true }

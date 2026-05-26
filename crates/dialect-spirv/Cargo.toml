@@ -1,0 +1,16 @@
+[package]
+name = "dialect-spirv"
+description = "Pliron IR dialect for SPIR-V operations. Sibling to cuda-oxide's dialect-nvvm; both projects depend on the same pliron rev so their dialects can interoperate."
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+repository.workspace = true
+
+[lints]
+workspace = true
+
+[dependencies]
+pliron = { workspace = true }
+pliron-derive = { workspace = true }
+thiserror = { workspace = true }

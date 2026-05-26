@@ -1,0 +1,13 @@
+[package]
+name = "spirv-device"
+description = "Device-side abstractions for spirv-oxide GPU kernels: kernel markers, thread indexing, shared memory, atomics, barriers. Mirrors cuda-oxide's cuda-device for the SPIR-V / Vulkan compute target."
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+repository.workspace = true
+
+[lints]
+workspace = true
+
+[dependencies]
