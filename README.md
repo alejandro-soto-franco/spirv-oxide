@@ -76,11 +76,11 @@ SPIR-V back half. The two host runtimes diverge below that line:
 
 ## Relationship to existing projects
 
-**cuda-oxide.** Independent sibling project. Both depend on the same
-`pliron` rev. Cross-pollination via cherry-pick. The near-term plan is
-to upstream small refactors that factor cuda-oxide's Pliron usage into a
-reusable dialect interface, so both backends can later consume a shared
-`dialect-gpu` crate. See `docs/relationship-to-cuda-oxide.md`.
+**cuda-oxide.** Architectural sibling. spirv-oxide is its own repo with
+its own roadmap; the only formal coupling is that both projects pin the
+same `pliron` rev so dialects can share IR semantics. Useful ideas may
+move between the two via cherry-pick during development. See
+`docs/relationship-to-cuda-oxide.md`.
 
 **rust-gpu.** Likely to borrow from its SPIR-V emission layer where the
 work overlaps. rust-gpu uses a direct rustc backend with no MLIR-style

@@ -1,70 +1,44 @@
 # Relationship to cuda-oxide
 
-spirv-oxide is an independent sibling project to
-[cuda-oxide](https://github.com/NVlabs/cuda-oxide) (NVIDIA Labs). The
-two projects share a strategic bet: that
-[Pliron](https://github.com/vaivaswatha/pliron) is the right MLIR-style
-intermediate representation for compiling pure Rust to GPU code.
+spirv-oxide is an independent project with its own roadmap. The only
+formal coupling to
+[cuda-oxide](https://github.com/NVlabs/cuda-oxide) (NVIDIA Labs) is that
+both projects depend on the same revision of
+[Pliron](https://github.com/vaivaswatha/pliron). Sharing the rev lets a
+SPIR-V dialect here use the same IR primitives that NVIDIA's PTX dialect
+uses there.
 
-## Shared dependencies
+## Pinned Pliron rev
 
-Both projects pin to the same `pliron` git rev. This is intentional. It
-means a GPU op defined in one project's dialect uses the same Pliron
-type system, attribute system, and IR walking machinery as the other.
-If the rev diverges, the two projects can no longer share dialect code
-without a manual port.
+Both `Cargo.toml` files reference the same `pliron` git rev. Keeping
+them in sync is a manual choice; bump together if at all. The current
+rev lives in `[workspace.dependencies]`.
 
-The current shared rev lives in `[workspace.dependencies]` of both
-projects' `Cargo.toml`. Keep them in sync when bumping.
+## Cherry-pick across local checkouts
 
-## Long-term plan
-
-The goal is a Pliron-GPU dialect crate consumed by both backends. The
-work decomposes into three upstream contributions to cuda-oxide,
-proposed in order:
-
-1. **Factor the Pliron usage in `dialect-nvvm` into a target-agnostic
-   trait.** Today the dialect mixes NVPTX-specific ops (warp shuffles,
-   tensor memory accelerator, cluster operations) with generic GPU ops
-   (work-item ID, barriers, atomics). The first PR pulls the generic
-   subset behind an interface.
-
-2. **Refactor `mir-lower` to consume the dialect interface.** Once
-   `dialect-nvvm` implements the interface from (1), `mir-lower` can
-   target it polymorphically. Behavior preserved; the abstraction is
-   the deliverable.
-
-3. **Propose extracting the dialect interface into a shared crate.**
-   At this point spirv-oxide's `dialect-spirv` implements the same
-   interface as the refactored `dialect-nvvm`, and `mir-lower` already
-   consumes it polymorphically. The shared crate (working name:
-   `dialect-gpu` or `pliron-gpu`) lives in cuda-oxide's tree, with
-   spirv-oxide consuming it via path-require or git dep.
-
-Each PR is in scope for cuda-oxide because it strengthens the existing
-project without expanding to non-NVIDIA targets. spirv-oxide picks up
-the shared crate as soon as it lands.
-
-## Cross-pollination
-
-Local development can cherry-pick across the two repos freely. The
-typical operations:
+During development it can be useful to move a single commit between
+local checkouts of the two projects:
 
 ```bash
-# In ~/spirv-oxide, pick a single commit from cuda-oxide:
+# Pick a commit from a local cuda-oxide clone into spirv-oxide:
+cd ~/spirv-oxide
 git remote add cuda-oxide ~/cuda-oxide   # local filesystem remote
 git fetch cuda-oxide
 git cherry-pick <sha>
-
-# In ~/cuda-oxide, pick a single commit from spirv-oxide:
-git remote add spirv-oxide ~/spirv-oxide
-git fetch spirv-oxide
-git cherry-pick <sha>
 ```
 
-When a cherry-picked change touches the Pliron dialect, file an upstream
-PR to cuda-oxide that lands the change in canonical form. Then drop the
-local cherry-pick from spirv-oxide once it's consuming the shared crate.
+The local-filesystem remote keeps the cross-pollination out of either
+GitHub origin. Drop the remote with `git remote remove cuda-oxide` when
+the work is done.
+
+## Scope clarifications
+
+- Git history started fresh in this repo. There is no shared commit
+  lineage with cuda-oxide.
+- Contributions to cuda-oxide go through the contributor's own cuda-oxide
+  fork, on its own branches. That is an unrelated workstream.
+- Both projects target Pliron directly. spirv-oxide does not consume
+  cuda-oxide's published crates.
 
 ## Naming
 
