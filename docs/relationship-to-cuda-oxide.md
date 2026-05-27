@@ -1,8 +1,8 @@
 # Relationship to cuda-oxide
 
-spirv-oxide is a sibling project to
-[cuda-oxide](https://github.com/NVlabs/cuda-oxide) (NVIDIA Labs), not a
-fork. The two projects share a strategic bet: that
+spirv-oxide is an independent sibling project to
+[cuda-oxide](https://github.com/NVlabs/cuda-oxide) (NVIDIA Labs). The
+two projects share a strategic bet: that
 [Pliron](https://github.com/vaivaswatha/pliron) is the right MLIR-style
 intermediate representation for compiling pure Rust to GPU code.
 
@@ -52,7 +52,7 @@ typical operations:
 
 ```bash
 # In ~/spirv-oxide, pick a single commit from cuda-oxide:
-git remote add cuda-oxide ~/cuda-oxide   # local path, not GitHub
+git remote add cuda-oxide ~/cuda-oxide   # local filesystem remote
 git fetch cuda-oxide
 git cherry-pick <sha>
 
